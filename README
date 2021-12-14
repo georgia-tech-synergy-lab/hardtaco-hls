@@ -1,0 +1,54 @@
+----------------------------------------------------------------------------------------------------------
+Hard TACO 
+----------------------------------------------------------------------------------------------------------
+This project enables users to utilize various TACO output templates to generate
+hardware designs for various sparse hardware. 
+
+
+----------------------------------------------------------------------------------------------------------
+Directory structure
+----------------------------------------------------------------------------------------------------------
+	- sim_init.py: script to generate paramateried HLS and testbench
+	- sim_param.cfg: configuration file (e.g. number of PEs)
+	- designs: HLS cpp code using hand tuned TACO generated outputs
+		-commons: Common code (includes etc.)	
+		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel)
+			-tpu_like: TPU-like accelerator HLS implementation (UmUk-UkUn compression)
+			-eie_like: EIE-like accelerator HLS implementation (UmCk-UkUn compression)
+			-extensor_like: ExTensor-like accelerator HLS implementation (UmCk-UnCk compression)
+			-outerspace_like: OuterSPACE-like accelerator HLS implementation (UkCm-UkCn compression)
+			-matraptor_like: MatRaptor-like accelerator HLS implementation (UkCm-UnCk compression)
+
+	- workloads: Contains sparse matrices and scripts for testbench generation
+		- gen_tenstbench.py: generate testbench files with real or random matrices
+		- gen_format.py: helper functions for compression format conversions
+		- matrix_cfg
+			- *.cfg: Workload script of "M,N,K,MK_NNZ,KN_NNZ"
+		- suitesparse
+			- * : different suitespace workloads (mtx files)
+
+----------------------------------------------------------------------------------------------------------
+Requirements:
+----------------------------------------------------------------------------------------------------------
+	- Xilinx Vitis HLS, Vivado, XRT Tools (Tested on version 2020.2 and xilinx_u50_gen3x16_xdma_201920_3)
+
+----------------------------------------------------------------------------------------------------------
+Run examples
+----------------------------------------------------------------------------------------------------------
+	1) Update sim_param.cfg with desired configuration (make sure there is no new line at end)
+	2) Run 'make sim' to generate sim directory
+	3) Run 'cd sim/cpp_kernels/<*-like>' to enter desired HLS sparse accelerator configuration
+	4) To run SW emulation
+		make check TARGET=sw_emu DEVICE=xilinx_u50_gen3x16_xdma_201920_3 HOST_ARCH=x86
+	5) To run HW emulation
+		make check TARGET=hw_emu DEVICE=xilinx_u50_gen3x16_xdma_201920_3 HOST_ARCH=x86
+	6) To run HW
+		make check TARGET=hw DEVICE=xilinx_u50_gen3x16_xdma_201920_3 HOST_ARCH=x86
+
+
+----------------------------------------------------------------------------------------------------------
+Known Issues/Comments:
+----------------------------------------------------------------------------------------------------------
+	- Large designs & workloads (especially using large buffer sizes) will cause sw_emu to crash.
+	- Most likely HLS will not be able to generate large designs in a reasonable amount of time.
+	
