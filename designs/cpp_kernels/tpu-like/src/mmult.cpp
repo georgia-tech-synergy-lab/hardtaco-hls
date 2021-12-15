@@ -48,7 +48,9 @@ Kernel Description :
 #define MATRIX_SIZE_N 24
 
 // Maximum Array Size
-#define MAX_SIZE 48
+#define STORAGE_M_DIM 48
+#define STORAGE_N_DIM 48
+#define STORAGE_K_DIM 48
 
 // Parallel MAC Units
 #define NUM_MACS 16
@@ -73,14 +75,14 @@ void mmult(const int* a, // Read-Only Matrix A
 		) {
 
 	// Local memory to store input and output matrices
-	int localA[MAX_SIZE][MAX_SIZE];
-#pragma HLS ARRAY_PARTITION variable = localA dim = 0 complete
+	int localA[STORAGE_M_DIM][STORAGE_K_DIM];
+//#pragma HLS ARRAY_PARTITION variable = localA dim = 1 complete
 
-	int localB[MAX_SIZE][MAX_SIZE];
-#pragma HLS ARRAY_PARTITION variable = localB dim = 0 complete
+	int localB[STORAGE_K_DIM][STORAGE_N_DIM];
+//#pragma HLS ARRAY_PARTITION variable = localB dim = 2 complete
 
-	int localO[MAX_SIZE][MAX_SIZE];
-#pragma HLS ARRAY_PARTITION variable = localO dim = 0 complete
+	int localO[STORAGE_M_DIM][STORAGE_N_DIM];
+//#pragma HLS ARRAY_PARTITION variable = localO dim = 0 complete
 
 // Burst reads on input matrices from global memory
 // Read Input A

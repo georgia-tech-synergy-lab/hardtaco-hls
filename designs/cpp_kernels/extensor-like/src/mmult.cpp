@@ -47,7 +47,11 @@ Kernel Description :
 #define MATRIX_SIZE_N 24
 
 // Maximum Array Size 
-#define MAX_SIZE 48
+#define STORAGE_M_DIM 48
+#define STORAGE_N_DIM 48
+#define STORAGE_K_DIM 48
+#define STORAGE_MK_NNZ 306
+#define STORAGE_KN_NNZ 550
 
 // Density percentage
 #define MK_NNZ 306
@@ -83,26 +87,26 @@ void mmult(const int* a_ptr, // Read-Only Matrix A
 		   ) {
 
 	// Local memory to store input and output matrices
-	int localA_ptr[MAX_SIZE+1];
-#pragma HLS ARRAY_PARTITION variable = localA_ptr dim = 0 complete
+	int localA_ptr[STORAGE_M_DIM+1];
+//#pragma HLS ARRAY_PARTITION variable = localA_ptr dim = 0 complete
 
-	int localA_idx[MAX_SIZE*MAX_SIZE]; // worst case allocation
+	int localA_idx[STORAGE_MK_NNZ]; // worst case allocation
 //#pragma HLS ARRAY_PARTITION variable = localA_idx dim = 0 complete
 	
-	int localA_val[MAX_SIZE*MAX_SIZE]; // worst case allocation
+	int localA_val[STORAGE_MK_NNZ]; // worst case allocation
 //#pragma HLS ARRAY_PARTITION variable = localA_val dim = 0 complete
 
-	int localB_ptr[MAX_SIZE+1];
-#pragma HLS ARRAY_PARTITION variable = localB_ptr dim = 0 complete
+	int localB_ptr[STORAGE_N_DIM+1];
+//#pragma HLS ARRAY_PARTITION variable = localB_ptr dim = 0 complete
 
-	int localB_idx[MAX_SIZE*MAX_SIZE]; // worst case allocation
+	int localB_idx[STORAGE_KN_NNZ]; // worst case allocation
 //#pragma HLS ARRAY_PARTITION variable = localB_idx dim = 0 complete
 	
-	int localB_val[MAX_SIZE*MAX_SIZE]; // worst case allocation
+	int localB_val[STORAGE_KN_NNZ]; // worst case allocation
 //#pragma HLS ARRAY_PARTITION variable = localB_val dim = 0 complete
 
-	int localO[MAX_SIZE][MAX_SIZE];
-#pragma HLS ARRAY_PARTITION variable = localO dim = 0 complete
+	int localO[STORAGE_M_DIM][STORAGE_N_DIM];
+//#pragma HLS ARRAY_PARTITION variable = localO dim = 0 complete
 
 
 // Burst reads on input matrices from global memory
@@ -146,14 +150,12 @@ readBval:
 	}
 	
 
-/*
 setzero:
-	for (int m = 0; m < m_dim; m++) {
-		for (int n = 0; n < n_dim; n++) {
+	for (int m = 0; m < STORAGE_M_DIM; m++) {
+		for (int n = 0; n < STORAGE_N_DIM; n++) {
 			localO[m][n] = 0;
 		}
 	}
-*/
 	
 
 // Perform SpGEMM matrix multiply (UmCk(A)-UnCk(B))

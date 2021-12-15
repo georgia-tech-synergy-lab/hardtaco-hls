@@ -50,7 +50,10 @@ using namespace std;
 #define MATRIX_SIZE_N 24
 
 // Maximum Array Size 
-#define MAX_SIZE 48
+#define STORAGE_M_DIM 48
+#define STORAGE_N_DIM 48
+#define STORAGE_K_DIM 48
+#define STORAGE_MK_NNZ 306
 
 // Density percentage
 #define MK_NNZ 306
@@ -132,10 +135,8 @@ int main(int argc, char** argv) {
 	}
 
 	// Allocate Memory in Host Memory
-	if (MATRIX_SIZE_M > MAX_SIZE || MATRIX_SIZE_K > MAX_SIZE || MATRIX_SIZE_N > MAX_SIZE) {
-		std::cout << "Size is bigger than internal buffer size, please use a "
-					 "size smaller than "
-				  << MAX_SIZE << "!" << std::endl;
+	if (MATRIX_SIZE_M > STORAGE_M_DIM || MATRIX_SIZE_K > STORAGE_K_DIM || MATRIX_SIZE_N > STORAGE_N_DIM || MK_NNZ > STORAGE_MK_NNZ) {
+		std::cout << "Size is bigger than internal buffer size" << std::endl;
 		return EXIT_FAILURE;
 	}
 	

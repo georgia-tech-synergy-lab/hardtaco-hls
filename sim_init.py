@@ -41,7 +41,11 @@ def read_param_file(param_file):
 	num_pes = -1
 	tpu_pes_x = -1
 	tpu_pes_y = -1
-	storage = -1
+	storage_m_dim = -1
+	storage_n_dim = -1
+	storage_k_dim = -1
+	storage_mk_nnz = -1
+	storage_kn_nnz = -1
 	workload = ""
  
 	# parse tensor config line
@@ -55,14 +59,26 @@ def read_param_file(param_file):
 		elif (line.startswith('TPU_PES_Y')):
 			line_split = line.split(":")   
 			tpu_pes_y = int(line_split[1])
-		elif (line.startswith('STORAGE')):
+		elif (line.startswith('STORAGE_M_DIM')):
 			line_split = line.split(":")   
-			storage = int(line_split[1])
+			storage_m_dim = int(line_split[1])
+		elif (line.startswith('STORAGE_N_DIM')):
+			line_split = line.split(":")   
+			storage_n_dim = int(line_split[1])
+		elif (line.startswith('STORAGE_K_DIM')):
+			line_split = line.split(":")   
+			storage_k_dim = int(line_split[1])
+		elif (line.startswith('STORAGE_MK_NNZ')):
+			line_split = line.split(":")   
+			storage_mk_nnz = int(line_split[1])
+		elif (line.startswith('STORAGE_KN_NNZ')):
+			line_split = line.split(":")   
+			storage_kn_nnz = int(line_split[1])
 		elif (line.startswith('WORKLOAD')):
 			line_split = line.split(":")
 			workload = line_split[1]
 	
-	return num_pes, tpu_pes_x, tpu_pes_y, storage, workload
+	return num_pes, tpu_pes_x, tpu_pes_y, storage_m_dim, storage_n_dim, storage_k_dim, storage_mk_nnz, storage_kn_nnz, workload
 
 
 def main():
@@ -75,15 +91,18 @@ def main():
 			args.param_file
 			))
 
-	num_pes, tpu_pes_x, tpu_pes_y, storage, workload = read_param_file(args.param_file)
+	num_pes, tpu_pes_x, tpu_pes_y, storage_m_dim, storage_n_dim, storage_k_dim, storage_mk_nnz, storage_kn_nnz, workload = read_param_file(args.param_file)
 
 	config_path = "./workloads/matrix_cfg/" + str(workload)
 	m_dim, n_dim, k_dim, mk_nnz, kn_nnz = read_cfg_file(config_path)
 
-	# hardware parameter check
-	assert m_dim < storage, "Storage size smaller than workload M dim, need to (1) increase storage or (2) tile workload"
-	assert n_dim < storage, "Storage size smaller than workload N dim, need to (1) increase storage or (2) tile workload"
-	assert k_dim < storage, "Storage size smaller than workload K dim, need to (1) increase storage or (2) tile workload"
+	# hardware storage parameter check
+	print(num_pes, tpu_pes_x, tpu_pes_y, storage_m_dim, storage_n_dim, storage_k_dim, storage_mk_nnz, storage_kn_nnz, workload)
+	assert m_dim <= storage_m_dim, "Storage size smaller than workload M dim, need to (1) increase storage or (2) tile workload"
+	assert n_dim <= storage_n_dim, "Storage size smaller than workload N dim, need to (1) increase storage or (2) tile workload"
+	assert k_dim <= storage_k_dim, "Storage size smaller than workload K dim, need to (1) increase storage or (2) tile workload"
+	assert mk_nnz <= storage_mk_nnz, "Storage size smaller than MK nnzs, need to (1) increase storage or (2) tile workload"
+	assert kn_nnz <= storage_kn_nnz, "Storage size smaller than KN nnzs, need to (1) increase storage or (2) tile workload"
 
 	# run configuration generation script
 	if (workload == "example.cfg"):
@@ -154,12 +173,20 @@ def main():
 				line = '#define MATRIX_SIZE_K ' + str(k_dim) + '\n'
 			elif line.strip().startswith('#define MATRIX_SIZE_N'):
 				line = '#define MATRIX_SIZE_N ' + str(n_dim) + '\n'	
-			elif line.strip().startswith('#define MAX_SIZE'):
-				line = '#define MAX_SIZE ' + str(storage) + '\n'	
+			elif line.strip().startswith('#define STORAGE_M_DIM'):
+				line = '#define STORAGE_M_DIM ' + str(storage_m_dim) + '\n'
+			elif line.strip().startswith('#define STORAGE_K_DIM'):
+				line = '#define STORAGE_K_DIM ' + str(storage_k_dim) + '\n'	
+			elif line.strip().startswith('#define STORAGE_N_DIM'):
+				line = '#define STORAGE_N_DIM ' + str(storage_n_dim) + '\n'					
 			elif line.strip().startswith('#define MK_NNZ'):
 				line = '#define MK_NNZ ' + str(mk_nnz) + '\n'
 			elif line.strip().startswith('#define KN_NNZ'):
-				line = '#define KN_NNZ ' + str(kn_nnz) + '\n'					
+				line = '#define KN_NNZ ' + str(kn_nnz) + '\n'	
+			elif line.strip().startswith('#define STORAGE_MK_NNZ'):
+				line = '#define STORAGE_MK_NNZ ' + str(storage_mk_nnz) + '\n'	
+			elif line.strip().startswith('#define STORAGE_KN_NNZ'):
+				line = '#define STORAGE_KN_NNZ ' + str(storage_kn_nnz) + '\n'				
 			sys.stdout.write(line)
 			
 		for line in fileinput.input([filename_mmult], inplace=True):
@@ -169,12 +196,20 @@ def main():
 				line = '#define MATRIX_SIZE_K ' + str(k_dim) + '\n'
 			elif line.strip().startswith('#define MATRIX_SIZE_N'):
 				line = '#define MATRIX_SIZE_N ' + str(n_dim) + '\n'	
-			elif line.strip().startswith('#define MAX_SIZE'):
-				line = '#define MAX_SIZE ' + str(storage) + '\n'	
+			elif line.strip().startswith('#define STORAGE_M_DIM'):
+				line = '#define STORAGE_M_DIM ' + str(storage_m_dim) + '\n'
+			elif line.strip().startswith('#define STORAGE_K_DIM'):
+				line = '#define STORAGE_K_DIM ' + str(storage_k_dim) + '\n'	
+			elif line.strip().startswith('#define STORAGE_N_DIM'):
+				line = '#define STORAGE_N_DIM ' + str(storage_n_dim) + '\n'		
 			elif line.strip().startswith('#define MK_NNZ'):
 				line = '#define MK_NNZ ' + str(mk_nnz) + '\n'
 			elif line.strip().startswith('#define KN_NNZ'):
 				line = '#define KN_NNZ ' + str(kn_nnz) + '\n'
+			elif line.strip().startswith('#define STORAGE_MK_NNZ'):
+				line = '#define STORAGE_MK_NNZ ' + str(storage_mk_nnz) + '\n'	
+			elif line.strip().startswith('#define STORAGE_KN_NNZ'):
+				line = '#define STORAGE_KN_NNZ ' + str(storage_kn_nnz) + '\n'		
 			elif line.strip().startswith('#define NUM_MACS'):
 				line = '#define NUM_MACS ' + str(num_pes) + '\n'
 			elif line.strip().startswith('#define NUM_MAC_X'):
