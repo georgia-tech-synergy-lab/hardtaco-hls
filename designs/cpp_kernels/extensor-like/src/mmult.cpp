@@ -207,7 +207,7 @@ loop_m_o:
 							
 						localO[m][n] = temp2;
 
-						#pragma HLS dependence variable=localO false
+						//#pragma HLS dependence variable=localO false
 					}
 					kA += (int)(kA0 == k);
 					kx += (int)(kx0 == k);

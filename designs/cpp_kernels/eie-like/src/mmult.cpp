@@ -164,7 +164,7 @@ loop_m_o:
 					// Write back results	
 					localO[m][n] = temp2;
 
-					#pragma HLS dependence variable=localO false 
+					//#pragma HLS dependence variable=localO false 
 				}
 			}
 		}
