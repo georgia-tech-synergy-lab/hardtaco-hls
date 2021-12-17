@@ -9,7 +9,7 @@ hardware designs for various sparse hardware.
 Directory structure
 ----------------------------------------------------------------------------------------------------------
 	- sim_init.py: script to generate paramateried HLS and testbench
-	- sim_param.cfg: configuration file (e.g. number of PEs) note: make sure there is no \n at end... (todo update script)
+	- sim_param.cfg: configuration file (e.g. number of PEs)
 	- designs: HLS cpp code using hand tuned TACO generated outputs
 		-commons: Common code (includes etc.)	
 		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel)
