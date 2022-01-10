@@ -12,7 +12,8 @@ Directory structure
 	- sim_param.cfg: configuration file (e.g. number of PEs)
 	- designs: HLS cpp code using hand tuned TACO generated outputs
 		-commons: Common code (includes etc.)	
-		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel)
+		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel) 
+		 Note: UxUx is uncompressed, UmCk is CSR, UkCm is CSC, UkCn is CSR, UnCk is CSC
 			-tpu_like: TPU-like accelerator HLS implementation (UmUk-UkUn compression)
 			-eie_like: EIE-like accelerator HLS implementation (UmCk-UkUn compression)
 			-extensor_like: ExTensor-like accelerator HLS implementation (UmCk-UnCk compression)
