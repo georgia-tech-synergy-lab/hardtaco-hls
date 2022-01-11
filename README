@@ -2,8 +2,15 @@
 Hard TACO 
 ----------------------------------------------------------------------------------------------------------
 This project enables users to utilize various TACO output templates to generate
-hardware designs for various sparse hardware. 
+hardware designs for various sparse accelerators. 
 
+Helpful & Relevant Links:
+	1) Vitis Accel Examples: 
+		https://github.com/Xilinx/Vitis_Accel_Examples
+	2) SuiteSparse Matrix Collection: 
+		https://sparse.tamu.edu/
+	3) TACO compiler: 
+		http://tensor-compiler.org/
 
 ----------------------------------------------------------------------------------------------------------
 Directory structure
@@ -13,13 +20,11 @@ Directory structure
 	- designs: HLS cpp code using hand tuned TACO generated outputs
 		-commons: Common code (includes etc.)	
 		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel) 
-		 Note 1: UxUx is uncompressed, UmCk is CSR, UkCm is CSC, UkCn is CSR, UnCk is CSC
-		 Note 2: All templates have the output matrix as uncompressed.
-			-tpu_like: TPU-like accelerator HLS implementation (UmUk-UkUn compression)
-			-eie_like: EIE-like accelerator HLS implementation (UmCk-UkUn compression)
-			-extensor_like: ExTensor-like accelerator HLS implementation (UmCk-UnCk compression)
-			-outerspace_like: OuterSPACE-like accelerator HLS implementation (UkCm-UkCn compression)
-			-matraptor_like: MatRaptor-like accelerator HLS implementation (UkCm-UnCk compression)
+			-tpu_like: TPU-like accelerator HLS implementation (GEMM with UmUk-UkUn compression)
+			-eie_like: EIE-like accelerator HLS implementation (SpMM with UmCk-UkUn compression)
+			-extensor_like: ExTensor-like accelerator HLS implementation (SpGEMM Inner Product with UmCk-UnCk compression)
+			-outerspace_like: OuterSPACE-like accelerator HLS implementation (SpGEMM Outer Product with UkCm-UkCn compression)
+			-matraptor_like: MatRaptor-like accelerator HLS implementation (SpGEMM Col-wise Product with UkCm-UnCk compression)
 
 	- workloads: Contains sparse matrices and scripts for testbench generation
 		- gen_tenstbench.py: generate testbench files with real or random matrices
@@ -33,6 +38,24 @@ Directory structure
 Requirements:
 ----------------------------------------------------------------------------------------------------------
 	- Xilinx Vitis HLS, Vivado, XRT Tools (Tested on version 2020.2 and xilinx_u50_gen3x16_xdma_201920_3)
+	
+----------------------------------------------------------------------------------------------------------
+Changing/Adding Workload:
+----------------------------------------------------------------------------------------------------------
+	- Adding Real Matrix from SuiteSparse
+		1) Find desired matrix from SuiteSparse.
+			The matrix cannot be too big; otherwise, the FPGA cannot fit all data in
+			memory. Tiling is needed if so.
+		2) Add mtx directory of the desired matrix into ./workload/suitesparse
+		3) Create new <matrix_name>.cfg file with the information: "M,N,K,MK_NNZ,KN_NNZ"
+			The M, K, and MK_NNZ is specificed in SuiteSparse.
+			N and KN_NNZ is up to the user.	
+		4) In sim_init.py, enable the new real matrix by following previous examples.
+			Use -u flag to specify whether it is undirected or directed
+			Use -r real to specify it is using real data.
+			
+	- Customizing Random Matrix
+		1) Update example.cfg file with the information: "M,N,K,MK_NNZ,KN_NNZ"
 
 ----------------------------------------------------------------------------------------------------------
 Run examples
@@ -46,6 +69,7 @@ Run examples
 		make check TARGET=hw_emu DEVICE=xilinx_u50_gen3x16_xdma_201920_3 HOST_ARCH=x86
 	6) To run HW
 		make check TARGET=hw DEVICE=xilinx_u50_gen3x16_xdma_201920_3 HOST_ARCH=x86
+	7) HLS report and Verilog are found in _x.hw.xilinx_u50_gen3x16_xdma_201920_3/
 
 
 ----------------------------------------------------------------------------------------------------------
