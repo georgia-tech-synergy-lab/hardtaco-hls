@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------------
 Hard TACO
 ----------------------------------------------------------------------------------------------------------
-This project enables users to utilize various TACO output templates to generate
+This project utilizes five different HLS templates (with compute loops from TACO) to generate
 hardware designs for various sparse accelerators. 
 
 Helpful & Relevant Links
