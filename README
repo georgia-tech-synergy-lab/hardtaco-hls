@@ -20,11 +20,16 @@ Directory structure
 	- designs: HLS cpp code using hand tuned TACO generated outputs
 		-commons: Common code (includes etc.)	
 		-cpp_kernels: HLS cpp code directory (host.cpp is testbench, mmult.cpp is HLS kernel) 
-			-tpu_like: TPU-like accelerator HLS implementation (GEMM with UmUk-UkUn compression)
-			-eie_like: EIE-like accelerator HLS implementation (SpMM with UmCk-UkUn compression)
-			-extensor_like: ExTensor-like accelerator HLS implementation (SpGEMM Inner Product with UmCk-UnCk compression)
-			-outerspace_like: OuterSPACE-like accelerator HLS implementation (SpGEMM Outer Product with UkCm-UkCn compression)
-			-matraptor_like: MatRaptor-like accelerator HLS implementation (SpGEMM Col-wise Product with UkCm-UnCk compression)
+			-tpu_like: TPU-like accelerator HLS implementation 
+				(GEMM with UmUk-UkUn compression)
+			-eie_like: EIE-like accelerator HLS implementation 
+				(SpMM with UmCk-UkUn compression)
+			-extensor_like: ExTensor-like accelerator HLS implementation 
+				(SpGEMM Inner Product with UmCk-UnCk compression)
+			-outerspace_like: OuterSPACE-like accelerator HLS implementation 
+				(SpGEMM Outer Product with UkCm-UkCn compression)
+			-matraptor_like: MatRaptor-like accelerator HLS implementation 
+				(SpGEMM Col-wise Product with UkCm-UnCk compression)
 
 	- workloads: Contains sparse matrices and scripts for testbench generation
 		- gen_tenstbench.py: generate testbench files with real or random matrices
