@@ -6,8 +6,10 @@ hardware designs for various sparse accelerators.
 
 Helpful & Relevant Links
 
-Vitis Accel Examples: https://github.com/Xilinx/Vitis_Accel_Examples
+Xilinx HLS Vitis Accel Examples: https://github.com/Xilinx/Vitis_Accel_Examples
+
 SuiteSparse Matrix Collection: https://sparse.tamu.edu/
+
 TACO compiler: http://tensor-compiler.org/
 
 ----------------------------------------------------------------------------------------------------------
