@@ -83,3 +83,8 @@ Known Issues/Comments:
 	- Large designs & workloads (especially using large buffer sizes) will cause sw_emu to crash.
 	- Most likely HLS will not be able to generate large designs in a reasonable amount of time.
 	
+----------------------------------------------------------------------------------------------------------
+Developers:
+----------------------------------------------------------------------------------------------------------
+	- Eric Qin (ecqin@gatech.edu)
+	
