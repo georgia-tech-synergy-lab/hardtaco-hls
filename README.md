@@ -4,12 +4,11 @@ Hard TACO
 This project enables users to utilize various TACO output templates to generate
 hardware designs for various sparse accelerators. 
 
-Helpful & Relevant Links:
-	1) Vitis Accel Examples: https://github.com/Xilinx/Vitis_Accel_Examples
-	
-	2) SuiteSparse Matrix Collection: https://sparse.tamu.edu/
-	
-	3) TACO compiler: http://tensor-compiler.org/
+Helpful & Relevant Links
+
+Vitis Accel Examples: https://github.com/Xilinx/Vitis_Accel_Examples
+SuiteSparse Matrix Collection: https://sparse.tamu.edu/
+TACO compiler: http://tensor-compiler.org/
 
 ----------------------------------------------------------------------------------------------------------
 Directory structure
